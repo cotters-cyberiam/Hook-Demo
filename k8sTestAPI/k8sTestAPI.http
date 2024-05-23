@@ -1,0 +1,6 @@
+@k8sTestAPI_HostAddress = http://localhost:5001
+
+GET {{k8sTestAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

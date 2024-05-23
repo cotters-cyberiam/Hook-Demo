@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "O5sVCWIkf9Sg22xIrfXvJ57zcT0vF+q77w+25gxprew=",
+  "Source": "k8sTestAPI",
+  "BasePath": "_content/k8sTestAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
