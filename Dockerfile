@@ -14,7 +14,7 @@ RUN dotnet clean
 RUN rm -r bin -f
 RUN rm -r obj -f
 RUN rm -r Properties -f
-RUN dotnet publish -r linux-x64 --self-contained false --no-restore -o /app
+RUN dotnet publish --use-current-runtime --self-contained false --no-restore -o /app
 
 
 # Enable globalization and time zones:
