@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8stestapi
+spec:
+  selector:
+    app: k8stestapi
+  ports:
+  - protocol: TCP
+    port: 5001
+    targetPort: 5001
+    nodePort: 30999
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: k8stestapi
+  name: k8stestapi
+  namespace: k8stestapi
+spec:
+  selector:
+    matchLabels:
+      app: k8stestapi
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: k8stestapi
+    spec:
+      containers:
+        - name: k8stestapi
+          image: cotters07/k8stestapi
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001

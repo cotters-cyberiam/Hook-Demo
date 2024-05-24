@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "k8sTestAPI", "k8sTestAPI\k8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4F2FCFB2-ACCD-428F-968C-2B41C412DA9B}"
 	ProjectSection(SolutionItems) = preProject
+		01-start.sh = 01-start.sh
+		02-delete.sh = 02-delete.sh
+		Dockerfile = Dockerfile
+		k8stestapi-deploy.yml = k8stestapi-deploy.yml
+		k8stestapi-namespace.yml = k8stestapi-namespace.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
