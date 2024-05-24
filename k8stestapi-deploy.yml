@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: k8stestapi
-        type: backend
+        count: 1
     spec:
       containers:
         - name: k8stestapi
