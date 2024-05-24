@@ -6,6 +6,12 @@ metadata:
   name: k8stestapi
   namespace: k8stestapi
 spec:
+  repicas: 1
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   selector:
     matchLabels:
       app: k8stestapi
