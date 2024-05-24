@@ -3,7 +3,6 @@ using System.Net;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -12,11 +11,6 @@ builder.WebHost.ConfigureKestrel(options =>
 );
 
 var app = builder.Build();
-
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
 
 app.UseHttpsRedirection();
 
@@ -38,7 +32,6 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast")
-.WithOpenApi();
 
 app.Run();
 
