@@ -11,9 +11,7 @@ RUN dotnet restore --use-current-runtime
 # copy everything else and build app
 COPY k8sTestAPI/. .
 RUN dotnet clean
-#RUN rm -r bin -f
-#RUN rm -r obj -f
-#RUN rm -r Properties -f
+
 RUN dotnet publish --use-current-runtime --self-contained false --no-restore -o /app
 
 
