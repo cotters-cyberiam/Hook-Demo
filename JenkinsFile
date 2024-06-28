@@ -1,0 +1,105 @@
+pipeline {
+
+  environment {
+    dockerimagename = "cotters07/k8stestapi"
+    dockerImage = ""
+  }
+
+  agent any
+
+  stages {
+
+    stage('Checkout Source') {
+      steps {
+        checkout scmGit(
+            branches: 
+            [[name: '*/main']], 
+            extensions: [], 
+            userRemoteConfigs: 
+            [[url: 'https://github.com/cotters-cyberiam/Hook-Demo']]
+        )
+      }
+    }
+    
+    
+
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
+        }
+      }
+    }
+
+   stage('Increment Deployment Yaml') {
+       steps{
+           sh 'sed -i "/count:/c\\        count: $(date +%s)" k8stestapi-deploy.yml'
+       }
+   }
+
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'c4ae59bc-bf49-4374-84c4-31117a0b904e'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+
+    stage('Deploying App to Kubernetes') {
+      steps {
+        script {
+          kubernetesDeploy(configs: "k8stestapi-deploy.yml", kubeconfigId: "lab_kubernetes")
+        }
+      }
+    }
+    
+    stage('Retrieving Credentials from Conjur - Just for fun') {
+      steps {
+            withCredentials([
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-address', variable: 'ADDRESS'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-database', variable: 'DATABASE'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-username', variable: 'USERNAME'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-password', variable: 'PASSWORD')])
+            {
+                sh """
+                    echo "The value of ADDRESS is: ${ADDRESS}"
+                    echo "The value of ADDRESS unmasked:"
+                    echo "$ADDRESS" | sed 's/./& /g'
+                    echo "The value of ADDRESS is: ${DATABASE}"
+                    echo "The value of ADDRESS unmasked:"
+                    echo "$DATABASE" | sed 's/./& /g'
+                    echo "The value of USERNAME is: ${USERNAME}"
+                    echo "The value of USERNAME unmasked:"
+                    echo "$USERNAME" | sed 's/./& /g'
+                    echo "The value of PASSWORD is: ${PASSWORD}"
+                    echo "The value of PASSWORD unmasked:"
+                    echo "$PASSWORD" | sed 's/./& /g'
+
+                """                
+            }
+      }
+    }
+    
+    stage('Retrieving Data with Conjur Secrets') {
+      steps {
+            withCredentials([
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-address', variable: 'ADDRESS'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-database', variable: 'DATABASE'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-username', variable: 'USERNAME'),
+                conjurSecretCredential(credentialsId: 'ProdVault-AppTeam1-DBNorthWind-nwDataReader-password', variable: 'PASSWORD')])
+            {
+                sh '''
+                    /opt/mssql-tools18/bin/sqlcmd -S $ADDRESS -U $USERNAME -P $PASSWORD -d $DATABASE -Q "select * from customers" -C
+                '''             
+            }
+      }
+    }
+
+  }
+
+}
